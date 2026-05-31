@@ -1,0 +1,51 @@
+{
+	"schemaVersion": 1,
+	"id": "bogus-mogus-world",
+	"version": "${version}",
+	"name": "Bogus Mogus World",
+	"description": "Bogus Mogus additions centered around magic and all that jazz",
+	"authors": [
+		"DrSus!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/bogus-mogus-world/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			{
+				"value": "drsus.bmworld.BogusMogusWorld",
+				"adapter": "kotlin"
+			}
+		],
+		"client": [
+			{
+				"value": "drsus.bmworld.client.BogusMogusWorldClient",
+				"adapter": "kotlin"
+			}
+		],
+		"fabric-datagen": [
+			{
+				"value": "drsus.bmworld.client.BogusMogusWorldDataGenerator",
+				"adapter": "kotlin"
+			}
+		]
+	},
+	"mixins": [
+		"bogus-mogus-world.mixins.json",
+		{
+			"config": "bogus-mogus-world.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.2",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*",
+		"fabric-language-kotlin": "*"
+	}
+}
