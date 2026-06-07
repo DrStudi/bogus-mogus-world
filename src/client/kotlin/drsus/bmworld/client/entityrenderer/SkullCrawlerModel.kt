@@ -1,5 +1,6 @@
 package drsus.bmworld.client.entityrenderer
 
+import drsus.bmworld.BogusMogusWorld.logger
 import net.minecraft.client.model.EntityModel
 import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.model.geom.PartPose
@@ -127,8 +128,12 @@ class SkullCrawlerModel(root: ModelPart) : EntityModel<SkullCrawlerEntityRenderS
 
     override fun setupAnim(state: SkullCrawlerEntityRenderState) {
         super.setupAnim(state)
-        this.walking.applyWalk(state.walkAnimationPos, state.walkAnimationSpeed, 2.0f, 2.5f)
-        this.dancing.apply(state.dancingAnimationState, state.ageInTicks);
+        if (state.dancingAnimationState.isStarted) {
+            this.dancing.apply(state.dancingAnimationState, state.ageInTicks)
+            logger.info("DANCE")
+        } else
+            this.walking.applyWalk(state.walkAnimationPos, state.walkAnimationSpeed, 2.0f, 2.5f)
+
 
     }
 }

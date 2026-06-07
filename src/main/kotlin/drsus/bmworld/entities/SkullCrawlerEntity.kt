@@ -1,6 +1,5 @@
 package drsus.bmworld.entities
 
-import drsus.bmworld.BogusMogusWorld.logger
 import net.minecraft.core.BlockPos
 import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializers
@@ -61,9 +60,15 @@ class SkullCrawlerEntity(entityType: EntityType<out PathfinderMob>, world: Level
 
 
     private fun setupAnimationStates() {
-        if (this.dancingTimeLeft >= 0) {
+        if (dancingTimeLeft>=100) {
             this.dancingAnimationState.start(this.tickCount)
-        } else this.dancingAnimationState.stop()
+            this.dancingTimeLeft=99
+        }
+
+        // if (this.dancingTimeLeft >= 0) {
+        //     dancingTimeLeft--
+        //     this.dancingAnimationState.start(this.tickCount)
+        // } else this.dancingAnimationState.stop()
     }
 
     private fun setDancing(dancing: Boolean) {
@@ -72,13 +77,12 @@ class SkullCrawlerEntity(entityType: EntityType<out PathfinderMob>, world: Level
 
     override fun updateWalkAnimation(f: Float) {
         super.updateWalkAnimation(f)
-        dancingAnimationState.animateWhen(isDancing(), this.tickCount)
-
     }
     override fun setRecordPlayingNearby(blockPos: BlockPos, bl: Boolean) {
         this.jukebox = blockPos
         setDancing(true)
-        dancingAnimationState.start(50)
+        this.dancingTimeLeft=100
+        dancingAnimationState.start(this.tickCount)
     }
     override fun tick() {
         super.tick()
