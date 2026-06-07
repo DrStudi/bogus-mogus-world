@@ -1,11 +1,12 @@
 package drsus.bmworld
 
+import drsus.bmworld.entities.ModEntityTypes
 import net.fabricmc.api.ModInitializer
 import org.slf4j.LoggerFactory
 
 object BogusMogusWorld : ModInitializer {
     val logger = LoggerFactory.getLogger("bogus-mogus-world")
-    val mod_id = "bogusmogusworld"
+    val mod_id = "bogus-mogus-world"
 
 
     override fun onInitialize() {
@@ -13,5 +14,6 @@ object BogusMogusWorld : ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 		logger.info("Hello Fabric world!")
+        ModEntityTypes.registerAttributes()
 	}
 }

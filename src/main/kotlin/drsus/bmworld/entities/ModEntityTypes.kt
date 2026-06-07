@@ -14,15 +14,16 @@ import net.minecraft.world.entity.MobCategory
 
 
 object ModEntityTypes {
-    val SKULL_CRAWLER: EntityType<SkullCrawlerEntity> = ModEntityTypes.register<T?>(
+    val SKULL_CRAWLER: EntityType<SkullCrawlerEntity> = ModEntityTypes.register(
         "skull_crawler",
-        EntityType.Builder.of<SkullCrawlerEntity>(EntityFactory { SkullCrawlerEntity() }, MobCategory.MISC)
-            .sized(0.75f, 1.75f)
+        EntityType.Builder.of<SkullCrawlerEntity>(::SkullCrawlerEntity, MobCategory.MISC)
+            .sized(0.8f, 0.8f)
     )
 
-    private fun <T : Entity?> register(name: String?, builder: EntityType.Builder<T?>): EntityType<T?> {
-        val key: ResourceKey<EntityType<*>?> =
-            ResourceKey.create<T?>(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(BogusMogusWorld.mod_id, name))
+    private fun <T : Entity> register(name: String, builder: EntityType.Builder<T>): EntityType<T> {
+        BogusMogusWorld.logger.info("Registering Entity " + name + " for " + BogusMogusWorld.mod_id)
+        val key: ResourceKey<EntityType<*>> =
+            ResourceKey.create(Registries.ENTITY_TYPE, Identifier.fromNamespaceAndPath(BogusMogusWorld.mod_id, name))
         return Registry.register(BuiltInRegistries.ENTITY_TYPE, key, builder.build(key))
     }
 
@@ -33,4 +34,5 @@ object ModEntityTypes {
     fun registerAttributes() {
         FabricDefaultAttributeRegistry.register(SKULL_CRAWLER, SkullCrawlerEntity.createCubeAttributes())
     }
+
 }
