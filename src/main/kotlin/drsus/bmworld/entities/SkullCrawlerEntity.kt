@@ -31,7 +31,7 @@ class SkullCrawlerEntity(entityType: EntityType<out PathfinderMob>, world: Level
 
         fun createCubeAttributes(): AttributeSupplier.Builder {
 
-            return PathfinderMob.createMobAttributes()
+            return createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.00)
                 .add(Attributes.SCALE, Random.nextDouble(0.90, 1.10))
                 .add(Attributes.MOVEMENT_SPEED, 0.22)
@@ -55,40 +55,33 @@ class SkullCrawlerEntity(entityType: EntityType<out PathfinderMob>, world: Level
 
     override fun defineSynchedData(builder: SynchedEntityData.Builder) {
         super.defineSynchedData(builder)
-        builder.define<Boolean>(dancing, false)
-    }
-
-
-    private fun setupAnimationStates() {
-        if (dancingTimeLeft>=100) {
-            this.dancingAnimationState.start(this.tickCount)
-            this.dancingTimeLeft=99
-        }
-
-        // if (this.dancingTimeLeft >= 0) {
-        //     dancingTimeLeft--
-        //     this.dancingAnimationState.start(this.tickCount)
-        // } else this.dancingAnimationState.stop()
+        builder.define(dancing, false)
     }
 
     private fun setDancing(dancing: Boolean) {
-        entityData.set<Boolean>(Companion.dancing, dancing)
+        entityData.set(Companion.dancing, dancing)
     }
 
     override fun updateWalkAnimation(f: Float) {
         super.updateWalkAnimation(f)
     }
+
     override fun setRecordPlayingNearby(blockPos: BlockPos, bl: Boolean) {
         this.jukebox = blockPos
         setDancing(true)
         this.dancingTimeLeft=100
         dancingAnimationState.start(this.tickCount)
     }
+
     override fun tick() {
         super.tick()
 
-        if (!level().isClientSide()) {
-            this.setupAnimationStates()
+        if (!level().isClientSide) {
+            if (isDancing()) {
+                if (dancingTimeLeft-- <= 0) {
+                    setDancing(false);
+                }
+            }
         }
     }
 
@@ -103,4 +96,11 @@ class SkullCrawlerEntity(entityType: EntityType<out PathfinderMob>, world: Level
         setDancing(dancingTimeLeft > 0)
     }
 
+    override fun onSyncedDataUpdated(entityDataAccessor: EntityDataAccessor<*>) {
+        super.onSyncedDataUpdated(entityDataAccessor)
+
+        if (entityDataAccessor == dancing) {
+            dancingAnimationState.animateWhen(isDancing(), this.tickCount)
+        }
+    }
 }
