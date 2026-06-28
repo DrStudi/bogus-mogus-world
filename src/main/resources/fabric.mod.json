@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "bogus-mogus-world",
+	"id": "bogusmogus_world",
 	"version": "${version}",
 	"name": "Bogus Mogus World",
 	"description": "Bogus Mogus additions centered around magic and all that jazz",
@@ -12,7 +12,7 @@
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
 	"license": "MIT",
-	"icon": "assets/bogus-mogus-world/icon.png",
+	"icon": "assets/bogusmogus_world/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -35,7 +35,7 @@
 		]
 	},
 	"mixins": [
-		"bogus-mogus-world.mixins.json",
+		"bogusmogus_world.mixins.json",
 		{
 			"config": "bogus-mogus-world.client.mixins.json",
 			"environment": "client"

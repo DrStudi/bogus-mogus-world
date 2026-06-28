@@ -6,7 +6,6 @@ import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.server.level.ServerLevel
-import net.minecraft.sounds.SoundSource
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.AnimationState
@@ -15,11 +14,13 @@ import net.minecraft.world.entity.PathfinderMob
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.ai.goal.*
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal
+import net.minecraft.world.entity.animal.rabbit.Rabbit
+import net.minecraft.world.entity.animal.turtle.Turtle
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.gameevent.GameEvent
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
 import kotlin.jvm.optionals.getOrElse
@@ -52,6 +53,11 @@ class SkullCrawlerEntity(entityType: EntityType<out PathfinderMob>, world: Level
         this.goalSelector.addGoal(1, TemptGoal(this, 1.0, Ingredient.of(Items.WHEAT), false))
         this.goalSelector.addGoal(2, RandomStrollGoal(this, 1.0))
         this.goalSelector.addGoal(3, LookAtPlayerGoal(this, Player::class.java, 4f))
+        this.targetSelector.addGoal(
+            1,
+            NearestAttackableTargetGoal(this, Rabbit::class.java, true, false)
+        )
+
         this.goalSelector.addGoal(4, RandomLookAroundGoal(this))
     }
 
@@ -92,7 +98,6 @@ class SkullCrawlerEntity(entityType: EntityType<out PathfinderMob>, world: Level
         super.tick()
 
         if (!level().isClientSide) {
-            logger.info("[World] Dancing: ${isDancing()}, ticks: ${this.tickCount}, left: $dancingTimeLeft")
             if (isDancing()) {
                 logger.info(dancingTimeLeft.toString())
                 if (dancingTimeLeft-- <= 0) {
@@ -105,18 +110,19 @@ class SkullCrawlerEntity(entityType: EntityType<out PathfinderMob>, world: Level
     override fun addAdditionalSaveData(valueOutput: ValueOutput) {
         super.addAdditionalSaveData(valueOutput)
         valueOutput.putInt("dancing_time_left", dancingTimeLeft)
+
     }
 
     override fun readAdditionalSaveData(valueInput: ValueInput) {
         super.readAdditionalSaveData(valueInput)
         dancingTimeLeft = valueInput.getInt("dancing_time_left").getOrElse { 0 }
+
     }
 
     override fun onSyncedDataUpdated(entityDataAccessor: EntityDataAccessor<*>) {
         super.onSyncedDataUpdated(entityDataAccessor)
 
         if (entityDataAccessor == dancing) {
-            logger.info("[Data changed] Dancing: ${isDancing()}, ticks: ${this.tickCount}, left: $dancingTimeLeft")
             dancingAnimationState.animateWhen(isDancing(), this.tickCount)
         }
     }

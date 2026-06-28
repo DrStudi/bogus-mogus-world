@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "bogusmogus_world:item/flintfire_axe_overlay"
+  }
+}
